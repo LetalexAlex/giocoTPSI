@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <head>
     <title>Pong</title>
-    <script src="https://pixijs.download/release/pixi.js"></script>
+    <script src="../pixi.js"></script>
     <!--<script src="js/index.js"></script>-->
 </head>
 <body style="margin: 0;">
     <script type="module">
         const width = window.innerWidth, height = window.innerHeight - 5;
         //set width and height to the tab's width and heigh;
-
-        let keyMap = {}
+        let speed = 10.0;
+        let keyMap = {};
 
         const app = new PIXI.Application();
         await app.init({ width: width, height: height });
@@ -24,6 +24,29 @@
         app.stage.addChild(p2);
         p2.x = width - p2.width;
 
+        await PIXI.Assets.load('assets/arts/Ball.png');
+        let ball = PIXI.Sprite.from('assets/arts/Ball.png');
+        app.stage.addChild(ball);
+        ball.anchor.set(0.5);
+        ball.x = width / 2;
+        ball.y = height / 2;
+
+        //add "Score" as text
+        
+        let score1 = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
+        app.stage.addChild(score1);
+        score1.x = width / 2 - score1.width;
+        let score2 = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
+        app.stage.addChild(score2);
+        score2.x = width / 2 + score2.width;
+        
+    
+
+
+
+        let direction = Math.random() * 1000 % 360;
+        console.log(direction);
+
         let elapsed = 0.0;
         
         window.onkeyup = function(e) { keyMap[e.keyCode] = false; console.log("keyup " + e.keyCode);}
@@ -31,30 +54,45 @@
 
         app.ticker.add((ticker) => {
             elapsed += ticker.deltaTime;
+
             if(keyMap["87"]) { //W
-                p1.y -= 10;
+                p1.y -= speed;
                 if(p1.y < 0) {
                     p1.y = 0;
                 }
             }
             if(keyMap["83"]) { //S
-                p1.y += 10;
+                p1.y += speed;
                 if(p1.y > height - p1.height) {
                     p1.y = height - p1.height;
                 }
             }
             if(keyMap["38"]) { //arrowUp
-                p2.y -= 10;
+                p2.y -= speed;
                 if(p2.y < 0) {
                     p2.y = 0;
                 }
             }
             if(keyMap["40"]) { //arrowDown
-                p2.y += 10;
+                p2.y += speed;
                 if(p2.y > height - p2.height) {
                     p2.y = height - p2.height;
                 }
             }
+            if(ball.x < p1.width) {
+                direction = 180 - direction;
+            }
+            if(ball.x > width - p2.width){
+                direction = 180 - direction;
+            }
+            if(ball.y < 0) {
+                direction = 360 - direction;
+            }
+            if(ball.y > height) {
+                direction = 360 - direction;
+            }
+            ball.x = ball.x + Math.cos(direction * Math.PI / 180) * speed;
+            ball.y = ball.y + Math.sin(direction * Math.PI / 180) * speed;
             //p1.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
             //p2.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
         })
