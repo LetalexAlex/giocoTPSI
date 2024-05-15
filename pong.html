@@ -7,7 +7,6 @@
 <body style="margin: 0;">
     <script type="module">
         const width = window.innerWidth, height = window.innerHeight - 5;
-        //set width and height to the tab's width and heigh;
         let speed = 10.0;
         let keyMap = {};
 
@@ -31,18 +30,12 @@
         ball.x = width / 2;
         ball.y = height / 2;
 
-        //add "Score" as text
-        
         let score1 = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
         app.stage.addChild(score1);
         score1.x = width / 2 - score1.width;
         let score2 = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
         app.stage.addChild(score2);
         score2.x = width / 2 + score2.width;
-        
-    
-
-
 
         let direction = Math.random() * 1000 % 360;
         console.log(direction);
@@ -54,7 +47,6 @@
 
         app.ticker.add((ticker) => {
             elapsed += ticker.deltaTime;
-
             if(keyMap["87"]) { //W
                 p1.y -= speed;
                 if(p1.y < 0) {
@@ -80,15 +72,32 @@
                 }
             }
             if(ball.x < p1.width) {
-                direction = 180 - direction;
+                if(ball.y > p1.y && ball.y < p1.y + p1.height && ball.x > 0) {
+                    direction = map(ball.y - p1.y, 0, p1.height, -45, 45);
+                }
+                else if(ball.x < -ball.width){
+                    score2.text = parseInt(score2.text) + 1;
+                    direction = Math.random() * 1000 % 360;
+                    console.log(direction);
+                    ball.x = width / 2;
+                    ball.y = height / 2;
+                }
             }
             if(ball.x > width - p2.width){
-                direction = 180 - direction;
+                if(ball.y > p2.y && ball.y < p2.y + p2.height && ball.x < width) {
+                    direction = 180 - map(ball.y - p2.y, 0, p2.height, -45, 45);;
+                } else if(ball.x > width + ball.width) {
+                    score1.text = parseInt(score1.text) + 1;
+                    direction = Math.random() * 1000 % 360;
+                    console.log(direction);
+                    ball.x = width / 2;
+                    ball.y = height / 2;
+                }
             }
-            if(ball.y < 0) {
+            if(ball.y < ball.width / 2) {
                 direction = 360 - direction;
             }
-            if(ball.y > height) {
+            if(ball.y > height - ball.height / 2) {
                 direction = 360 - direction;
             }
             ball.x = ball.x + Math.cos(direction * Math.PI / 180) * speed;
@@ -96,6 +105,9 @@
             //p1.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
             //p2.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
         })
+        function map(value, inMin, inMax, outMin, outMax) {
+            return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+        }
     </script>
 </body>
 </html>
