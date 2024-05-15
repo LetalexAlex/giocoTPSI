@@ -14,17 +14,17 @@
         await app.init({ width: width, height: height });
         document.body.appendChild(app.canvas);
 
-        await PIXI.Assets.load('assets/arts/Computer.png');
-        let p1 = PIXI.Sprite.from('assets/arts/Computer.png');
+        await PIXI.Assets.load('Assets/Pong/Computer.png');
+        let p1 = PIXI.Sprite.from('Assets/Pong/Computer.png');
         app.stage.addChild(p1);
 
-        await PIXI.Assets.load('assets/arts/Player.png');
-        let p2 = PIXI.Sprite.from('assets/arts/Player.png');
+        await PIXI.Assets.load('Assets/Pong/Player.png');
+        let p2 = PIXI.Sprite.from('Assets/Pong/Player.png');
         app.stage.addChild(p2);
         p2.x = width - p2.width;
 
-        await PIXI.Assets.load('assets/arts/Ball.png');
-        let ball = PIXI.Sprite.from('assets/arts/Ball.png');
+        await PIXI.Assets.load('Assets/Pong/Ball.png');
+        let ball = PIXI.Sprite.from('Assets/Pong/Ball.png');
         app.stage.addChild(ball);
         ball.anchor.set(0.5);
         ball.x = width / 2;
