@@ -4,18 +4,15 @@
     <script src="https://pixijs.download/release/pixi.js"></script>
     <!--<script src="js/index.js"></script>-->
 </head>
-<body>
+<body style="margin: 0;">
     <script type="module">
-        const keyMap = {
-            KeyW: 'up1',
-            KeyS: 'down1',
-            ArrowUp: 'up2',
-            ArrowDown: 'down2'
-        }
+        const width = window.innerWidth, height = window.innerHeight - 5;
+        //set width and height to the tab's width and heigh;
+
+        let keyMap = {}
 
         const app = new PIXI.Application();
-        await app.init({ width: 1360, height: 720 });
-
+        await app.init({ width: width, height: height });
         document.body.appendChild(app.canvas);
 
         await PIXI.Assets.load('assets/arts/Computer.png');
@@ -25,47 +22,39 @@
         await PIXI.Assets.load('assets/arts/Player.png');
         let p2 = PIXI.Sprite.from('assets/arts/Player.png');
         app.stage.addChild(p2);
-        p2.x = 1343;
+        p2.x = width - p2.width;
 
         let elapsed = 0.0;
         
-        document.addEventListener('keydown', (event) => {
-            if (keyMap[event.code]) {
-
-                let key = keyMap[event.code];
-                if (key.startsWith('up1')) {
-                    p1.y -= 10;
-                    console.log(p1.y);
-                    if (p1.y < 0) {
-                        p1.y = 0;
-                    }
-                }
-                if(key.startsWith('down1')) {
-                    p1.y += 10;
-                    console.log(p1.y);
-                    if (p1.y > 600) {
-                        p1.y = 600;
-                    }
-                }
-                if (key.startsWith('up2')) {
-                    p2.y -= 10;
-                    console.log(p2.y);
-                    if (p2.y < 0) {
-                        p2.y = 0;
-                    }
-                }
-                if(key.startsWith('down2')) {
-                    p2.y += 10;
-                    console.log(p2.y);
-                    if (p2.y > 600) {
-                        p2.y = 600;
-                    }
-                }
-            }
-        });
+        window.onkeyup = function(e) { keyMap[e.keyCode] = false; console.log("keyup " + e.keyCode);}
+        window.onkeydown = function(e) { keyMap[e.keyCode] = true; console.log("keydown " + e.keyCode);}
 
         app.ticker.add((ticker) => {
             elapsed += ticker.deltaTime;
+            if(keyMap["87"]) { //W
+                p1.y -= 10;
+                if(p1.y < 0) {
+                    p1.y = 0;
+                }
+            }
+            if(keyMap["83"]) { //S
+                p1.y += 10;
+                if(p1.y > height - p1.height) {
+                    p1.y = height - p1.height;
+                }
+            }
+            if(keyMap["38"]) { //arrowUp
+                p2.y -= 10;
+                if(p2.y < 0) {
+                    p2.y = 0;
+                }
+            }
+            if(keyMap["40"]) { //arrowDown
+                p2.y += 10;
+                if(p2.y > height - p2.height) {
+                    p2.y = height - p2.height;
+                }
+            }
             //p1.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
             //p2.y = 100.0 + Math.cos(elapsed/50.0) * 100.0;
         })
