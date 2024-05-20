@@ -11,6 +11,7 @@
         let g = 0.0981 * 5
         let pipespeed = 5;
         let keyMap = {};
+        let game = false
 
         const app = new PIXI.Application();
         await app.init({ width: width, height: height });
@@ -30,7 +31,7 @@
         pipetop.scale.y = -1
         setPipes()
 
-        let score = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
+        let score = new PIXI.Text("Premi Spazio per iniziare", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
         app.stage.addChild(score);
         score.x = width / 2 - score.width / 2;
 
@@ -41,16 +42,29 @@
 
         app.ticker.add((ticker) => {
             elapsed += ticker.deltaTime;
-            speed += g;
-            if(keyMap["32"] && speed > 0) {
-                speed = -10;
-            }
-            bird.y += speed * ticker.deltaTime;
-            pipetop.x -= pipespeed;
-            pipebottom.x -= pipespeed;
-            if(pipetop.x + pipetop.width < 0) {
-                score.text = parseInt(score.text) + 1;
-                setPipes()
+            if(game) {
+                speed += g;
+                bird.y += speed * ticker.deltaTime;
+                if(keyMap["32"] && speed > 0) {
+                    speed = -10;
+                }
+                pipetop.x -= pipespeed;
+                pipebottom.x -= pipespeed;
+                if(pipetop.x + pipetop.width < 0) {
+                    score.text = parseInt(score.text) + 1;
+                    setPipes()
+                }
+                if(checkCollision()) {
+                    game = false;
+                    score.text = "Game Over, Premi Spazio per Re-iniziare";
+                }
+            } else {
+                if(keyMap["32"]) {
+                    game = true;
+                    bird.y = height / 2;
+                    setPipes();
+                    score.text = "0";
+                }
             }
         })
         
@@ -62,6 +76,18 @@
             pipetop.y = pipeY - bird.height / 2 * 7;
             pipebottom.y = pipeY + bird.height / 2 * 7;
         }
+        function checkCollision() {
+            if (bird.y < 0 || bird.y > height) {
+                return true;
+            }
+            if (bird.x + bird.width > pipetop.x && bird.x < pipetop.x + pipetop.width) {
+                if (bird.y < pipetop.y || bird.y + bird.height > pipebottom.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     </script>
 </body>
 </html>
