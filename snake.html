@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.0.0/pixi.min.js"></script>
+    <script>
+        // Configurazione di base
+        const app = new PIXI.Application({ width: 800, height: 600 });
+        document.body.appendChild(app.view); 
+
+        const gridSize = 20;
+        const snake = [];
+        let direction = 'right';
+        let food = null;
+        let gameLoopInterval;
+
+        // Funzione per creare un segmento del serpente
+        function createSnakeSegment(x, y) {
+            const segment = new PIXI.Graphics();
+            segment.beginFill(0x00FF00);
+            segment.drawRect(0, 0, gridSize, gridSize);
+            segment.endFill();
+            segment.x = x;
+            segment.y = y;
+            app.stage.addChild(segment);
+            return segment;
+        }
+
+        // Funzione per creare il cibo
+        function createFood() {
+            if (food) {
+                app.stage.removeChild(food);
+            }
+            food = new PIXI.Graphics();
+            food.beginFill(0xFF0000);
+            food.drawRect(0, 0, gridSize, gridSize);
+            food.endFill();
+            food.x = Math.floor(Math.random() * (app.screen.width / gridSize)) * gridSize;
+            food.y = Math.floor(Math.random() * (app.screen.height / gridSize)) * gridSize;
+            app.stage.addChild(food);
+        }
+
+        // Funzione per inizializzare il gioco
+        function initGame() {
+            snake.length = 0;
+            for (let i = 0; i < 5; i++) {
+                snake.push(createSnakeSegment(i * gridSize, 0));
+            }
+            direction = 'right';
+            createFood();
+            if (gameLoopInterval) {
+                clearInterval(gameLoopInterval);
+            }
+            gameLoopInterval = setInterval(gameLoop, 100);
+        }
+
+        // Funzione per aggiornare la posizione del serpente
+        function updateSnake() {
+            const head = snake[0];
+            let newX = head.x;
+            let newY = head.y;
+
+            if (direction === 'right') newX += gridSize;
+            if (direction === 'left') newX -= gridSize;
+            if (direction === 'up') newY -= gridSize;
+            if (direction === 'down') newY += gridSize;
+
+            const newHead = createSnakeSegment(newX, newY);
+            snake.unshift(newHead);
+
+            if (newX === food.x && newY === food.y) {
+                createFood();
+            } else {
+                const tail = snake.pop();
+                app.stage.removeChild(tail);
+            }
+        }
+
+        // Funzione per gestire la logica del gioco
+        function gameLoop() {
+            updateSnake();
+            checkCollision();
+        }
+
+        // Funzione per controllare le collisioni
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= app.screen.width || head.y < 0 || head.y >= app.screen.height) {
+                initGame();
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    initGame();
+                }
+            }
+        }
+
+        // Gestione degli input da tastiera
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && direction !== 'left') direction = 'right';
+            if (e.key === 'ArrowLeft' && direction !== 'right') direction = 'left';
+            if (e.key === 'ArrowUp' && direction !== 'down') direction = 'up';
+            if (e.key === 'ArrowDown' && direction !== 'up') direction = 'down';
+        });
+
+        // Inizializzazione del gioco
+        initGame();
+    </script>
+</body>
+</html>
