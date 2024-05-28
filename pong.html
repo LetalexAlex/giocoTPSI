@@ -46,7 +46,26 @@
         score2.x = width / 2 + score2.width; // Posiziona il punteggio del giocatore 2
 
         // Imposta una direzione casuale per la palla
-        let direction = Math.random() * 1000 % 360;
+        function generaDir() {
+            let direction = Math.random() * 1000 % 360;
+            if(direction > 0 && direction < 180) {
+                if(direction < 45) {
+                    return 45;
+                } else if(direction > 135) {
+                    return 135;
+                }
+            } else {
+                if(direction < 225) {
+                    return 225;
+                } else if(direction > 315) {
+                    return 315;
+                }
+                return direction;
+            }
+        }
+
+        let direction = generaDir();
+        
         console.log(direction);
 
         let elapsed = 0.0; // Tempo trascorso
@@ -92,7 +111,7 @@
                 }
                 else if(ball.x < -ball.width){
                     score2.text = parseInt(score2.text) + 1;
-                    direction = Math.random() * 1000 % 360;
+                    direction = generaDir()
                     console.log(direction);
                     ball.x = width / 2;
                     ball.y = height / 2;
@@ -103,7 +122,7 @@
                     direction = 180 - map(ball.y - p2.y, 0, p2.height, -45, 45);
                 } else if(ball.x > width + ball.width) {
                     score1.text = parseInt(score1.text) + 1;
-                    direction = Math.random() * 1000 % 360;
+                    direction = generaDir()
                     console.log(direction);
                     ball.x = width / 2;
                     ball.y = height / 2;
