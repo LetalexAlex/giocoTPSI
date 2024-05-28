@@ -8,10 +8,11 @@
     <script type="module">
         // Imposta la larghezza e l'altezza della finestra
         const width = window.innerWidth, height = window.innerHeight - 5;
-        let speed = 0.0; // Velocità verticale iniziale dell'uccello
-        let g = 0.0981 * 5; // Accelerazione di gravità
-        let pipespeed = 5; // Velocità di movimento dei tubi
-        let keyMap = {}; // Mappa per tenere traccia dei tasti premuti
+        let speed = 0.0;
+        let g = 0.0981 * 5
+        let pipespeed = 5;
+        let keyMap = {};
+        let game = false
 
         // Crea una nuova applicazione PixiJS
         const app = new PIXI.Application();
@@ -34,11 +35,9 @@
         pipetop.scale.y = -1; // Inverte il tubo superiore
         setPipes(); // Imposta la posizione iniziale dei tubi
 
-        // Crea il testo per il punteggio
-        let score = new PIXI.Text("0", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
-        app.stage.addChild(score); // Aggiunge il testo del punteggio al palco
-        score.x = width / 2 - score.width / 2; // Posiziona il punteggio al centro orizzontale
-
+        let score = new PIXI.Text("Premi Spazio per iniziare", { fontFamily : "Arial", fontSize: 24, fill : 0xFFFFFF });
+        app.stage.addChild(score);
+        score.x = width / 2 - score.width / 2;
         let elapsed = 0.0; // Tempo trascorso
         
         // Gestisce l'evento di rilascio del tasto
@@ -49,16 +48,29 @@
         // Aggiunge una funzione al ticker per aggiornare il gioco
         app.ticker.add((ticker) => {
             elapsed += ticker.deltaTime;
-            speed += g; // Aumenta la velocità verticale con la gravità
-            if(keyMap["32"] && speed > 0) { // Se la barra spaziatrice è premuta e l'uccello sta cadendo
-                speed = -10; // Imposta una velocità verso l'alto
-            }
-            bird.y += speed * ticker.deltaTime; // Aggiorna la posizione verticale dell'uccello
-            pipetop.x -= pipespeed; // Muove il tubo superiore verso sinistra
-            pipebottom.x -= pipespeed; // Muove il tubo inferiore verso sinistra
-            if(pipetop.x + pipetop.width < 0) { // Se i tubi escono dallo schermo
-                score.text = parseInt(score.text) + 1; // Incrementa il punteggio
-                setPipes(); // Reimposta la posizione dei tubi
+            if(game) {
+                speed += g;
+                bird.y += speed * ticker.deltaTime;
+                if(keyMap["32"] && speed > 0) {
+                    speed = -10;
+                }
+                pipetop.x -= pipespeed;
+                pipebottom.x -= pipespeed;
+                if(pipetop.x + pipetop.width < 0) {
+                    score.text = parseInt(score.text) + 1;
+                    setPipes()
+                }
+                if(checkCollision()) {
+                    game = false;
+                    score.text = "Game Over, Premi Spazio per Re-iniziare";
+                }
+            } else {
+                if(keyMap["32"]) {
+                    game = true;
+                    bird.y = height / 2;
+                    setPipes();
+                    score.text = "0";
+                }
             }
         });
         
@@ -71,6 +83,18 @@
             pipetop.y = pipeY - bird.height / 2 * 7; // Posiziona il tubo superiore
             pipebottom.y = pipeY + bird.height / 2 * 7; // Posiziona il tubo inferiore
         }
+        function checkCollision() {
+            if (bird.y < 0 || bird.y > height) {
+                return true;
+            }
+            if (bird.x + bird.width > pipetop.x && bird.x < pipetop.x + pipetop.width) {
+                if (bird.y < pipetop.y || bird.y + bird.height > pipebottom.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     </script>
 </body>
 </html>
