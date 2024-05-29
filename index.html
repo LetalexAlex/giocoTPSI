@@ -62,8 +62,36 @@
 <body>
     <div class="menu">
         <h1>Game Menu</h1>
-        <a href="flappybird.html">Play Flappy Bird</a>
-        <a href="pong.html">Play Pong</a>
     </div>
+    <script>
+        // Funzione per creare le ancore dinamicamente
+        function createAnchors() {
+            // Effettua una richiesta per ottenere il file 'htmlFiles.json'
+            fetch('htmlFiles.json')
+                // Converte la risposta in formato JSON
+                .then(response => response.json())
+                // Utilizza i dati JSON per creare le ancore
+                .then(files => {
+                    // Seleziona l'elemento del menu dove verranno aggiunte le ancore
+                    const menu = document.querySelector('.menu');
+                    // Itera su ogni file nel JSON
+                    files.forEach(file => {
+                        // Crea un nuovo elemento 'a' (ancora)
+                        const anchor = document.createElement('a');
+                        // Imposta l'attributo href dell'ancora con il percorso del file
+                        anchor.href = file;
+                        // Imposta il testo dell'ancora rimuovendo l'estensione '.html' dal nome del file
+                        anchor.textContent = `Gioca a ${file.split('/').pop().replace('.html', '')}`;
+                        // Aggiunge l'ancora al menu
+                        menu.appendChild(anchor);
+                    });
+                })
+                // Gestisce eventuali errori durante il caricamento dei file HTML
+                .catch(error => console.error('Errore nel caricamento dei file HTML:', error));
+        }
+        // Chiamata alla funzione per creare le ancore
+        createAnchors();
+    </script>
+    
 </body>
 </html>
