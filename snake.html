@@ -27,8 +27,10 @@
     <script src="pixi.js"></script>
     <script>
         // Configurazione di base
+        const width = window.innerWidth, height = window.innerHeight - 5;
         const app = new PIXI.Application({ width: 800, height: 600 });
-        document.body.appendChild(app.view); 
+        app.init({ width: width, height: height });
+        document.body.appendChild(app.canvas); // Aggiunge il canvas all'elemento body
 
         const gridSize = 20; // Dimensione della griglia
         const snake = []; // Array per memorizzare i segmenti del serpente
