@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Inclusione della libreria PixiJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.0.0/pixi.min.js"></script>
+    <script>
+        // Configurazione di base
+        const app = new PIXI.Application({ width: 800, height: 600 });
+        document.body.appendChild(app.view); 
+
+        const gridSize = 20; // Dimensione della griglia
+        const snake = []; // Array per memorizzare i segmenti del serpente
+        let direction = 'right'; // Direzione iniziale del serpente
+        let food = null; // Variabile per il cibo
+        let gameLoopInterval; // Variabile per l'intervallo del ciclo di gioco
+
+        // Funzione per creare un segmento del serpente
+        function createSnakeSegment(x, y) {
+            const segment = new PIXI.Graphics();
+            segment.beginFill(0x00FF00); // Colore verde per il serpente
+            segment.drawRect(0, 0, gridSize, gridSize); // Disegna un rettangolo
+            segment.endFill();
+            segment.x = x;
+            segment.y = y;
+            app.stage.addChild(segment); // Aggiunge il segmento alla scena
+            return segment;
+        }
+
+        // Funzione per creare il cibo
+        function createFood() {
+            if (food) {
+                app.stage.removeChild(food); // Rimuove il cibo precedente
+            }
+            food = new PIXI.Graphics();
+            food.beginFill(0xFF0000); // Colore rosso per il cibo
+            food.drawRect(0, 0, gridSize, gridSize); // Disegna un rettangolo
+            food.endFill();
+            // Posiziona il cibo in una posizione casuale
+            food.x = Math.floor(Math.random() * (app.screen.width / gridSize)) * gridSize;
+            food.y = Math.floor(Math.random() * (app.screen.height / gridSize)) * gridSize;
+            app.stage.addChild(food); // Aggiunge il cibo alla scena
+        }
+
+        // Funzione per inizializzare il gioco
+        function initGame() {
+            snake.length = 0; // Resetta il serpente
+            for (let i = 0; i < 5; i++) {
+                snake.push(createSnakeSegment(i * gridSize, 0)); // Crea i segmenti iniziali del serpente
+            }
+            direction = 'right'; // Direzione iniziale
+            createFood(); // Crea il cibo
+            if (gameLoopInterval) {
+                clearInterval(gameLoopInterval); // Ferma il ciclo di gioco precedente
+            }
+            gameLoopInterval = setInterval(gameLoop, 100); // Avvia il ciclo di gioco
+        }
+
+        // Funzione per aggiornare la posizione del serpente
+        function updateSnake() {
+            const head = snake[0]; // Ottiene la testa del serpente
+            let newX = head.x;
+            let newY = head.y;
+
+            // Aggiorna la posizione della testa in base alla direzione
+            if (direction === 'right') newX += gridSize;
+            if (direction === 'left') newX -= gridSize;
+            if (direction === 'up') newY -= gridSize;
+            if (direction === 'down') newY += gridSize;
+
+            const newHead = createSnakeSegment(newX, newY); // Crea un nuovo segmento per la testa
+            snake.unshift(newHead); // Aggiunge il nuovo segmento all'inizio dell'array
+
+            // Controlla se il serpente ha mangiato il cibo
+            if (newX === food.x && newY === food.y) {
+                createFood(); // Crea nuovo cibo
+            } else {
+                const tail = snake.pop(); // Rimuove l'ultimo segmento (coda)
+                app.stage.removeChild(tail); // Rimuove la coda dalla scena
+            }
+        }
+
+        // Funzione per gestire la logica del gioco
+        function gameLoop() {
+            updateSnake(); // Aggiorna la posizione del serpente
+            checkCollision(); // Controlla le collisioni
+        }
+
+        // Funzione per controllare le collisioni
+        function checkCollision() {
+            const head = snake[0]; // Ottiene la testa del serpente
+            // Controlla se la testa del serpente ha colpito i bordi della scena
+            if (head.x < 0 || head.x >= app.screen.width || head.y < 0 || head.y >= app.screen.height) {
+                initGame(); // Reinizializza il gioco
+            }
+            // Controlla se la testa del serpente ha colpito il corpo
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    initGame(); // Reinizializza il gioco
+                }
+            }
+        }
+
+        // Gestione degli input da tastiera
+        window.addEventListener('keydown', (e) => {
+            // Cambia la direzione del serpente in base alla freccia premuta
+            if (e.key === 'ArrowRight' && direction !== 'left') direction = 'right';
+            if (e.key === 'ArrowLeft' && direction !== 'right') direction = 'left';
+            if (e.key === 'ArrowUp' && direction !== 'down') direction = 'up';
+            if (e.key === 'ArrowDown' && direction !== 'up') direction = 'down';
+        });
+
+        // Inizializzazione del gioco
+        initGame();
+    </script>
+</body>
+</html>
