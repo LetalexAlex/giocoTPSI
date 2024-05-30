@@ -3,33 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Snake</title>
-    <style>
-        #primaryButton {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #000000;
-            color: white; 
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-        }
-        
-        #primaryButton:hover {
-            background-color: #333333; 
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <button id="backButton">Torna all'Index</button>
     <!-- Inclusione della libreria PixiJS -->
-    <script src="pixi.js"></script>
-    <script>
+    <script src="./pixi.js"></script>
+    <script type="module">
         // Configurazione di base
         const width = window.innerWidth, height = window.innerHeight - 5;
-        const app = new PIXI.Application({ width: 800, height: 600 });
-        app.init({ width: width, height: height });
+        const app = new PIXI.Application();
+        await app.init({ width: width, height: height });
         document.body.appendChild(app.canvas); // Aggiunge il canvas all'elemento body
 
         const gridSize = 20; // Dimensione della griglia

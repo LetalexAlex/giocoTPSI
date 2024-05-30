@@ -5,23 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird</title>
     <script src="pixi.js"></script>
-    <style>
-        #primaryButton {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #000000; 
-            color: white; 
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-        }
-        
-        #primaryButton:hover {
-            background-color: #333333; 
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body style="margin: 0;">
     <button id="backButton">Torna all'Index</button>
@@ -29,7 +13,7 @@
         // Imposta la larghezza e l'altezza della finestra
         const width = window.innerWidth, height = window.innerHeight - 5;
         let speed = 0.0;
-        let g = 0.0981 * 5
+        let g = 0.0981 * 8
         let pipespeed = 5;
         let keyMap = {};
         let game = false
