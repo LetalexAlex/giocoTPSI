@@ -7,7 +7,6 @@
 </head>
 <body>
     <button id="backButton">Torna all'Index</button>
-    <!-- Inclusione della libreria PixiJS -->
     <script src="./pixi.js"></script>
     <script type="module">
         // Configurazione di base
@@ -51,6 +50,7 @@
 
         // Funzione per inizializzare il gioco
         function initGame() {
+            removeSnake()
             snake.length = 0; // Resetta il serpente
             for (let i = 0; i < 5; i++) {
                 snake.push(createSnakeSegment(i * gridSize, 0)); // Crea i segmenti iniziali del serpente
@@ -105,6 +105,14 @@
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     initGame(); // Reinizializza il gioco
                 }
+            }
+        }
+
+        // Funzione per rimuovere il serpente
+        function removeSnake() {
+            while (snake.length > 0) {
+                const segment = snake.pop(); // Rimuove l'ultimo segmento
+                app.stage.removeChild(segment); // Rimuove il segmento dalla scena
             }
         }
 
